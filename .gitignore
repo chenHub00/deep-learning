@@ -15,3 +15,10 @@ face_generation/data/
 */.floyd*
 
 .github/**
+
+__pycache__/
+*.pyc
+.venv/
+runs/
+*.pt
+*.pth

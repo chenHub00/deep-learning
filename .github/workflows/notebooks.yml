@@ -1,0 +1,35 @@
+name: Notebooks
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install CPU PyTorch and dependencies
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+      - name: Execute ported notebooks
+        # Folders are added to ported_folders.txt as each one is migrated.
+        run: |
+          if [ -s ported_folders.txt ]; then
+            while read -r d; do
+              [ -z "$d" ] && continue
+              pytest --nbmake --nbmake-timeout=600 "$d"
+            done < ported_folders.txt
+          else
+            echo "No ported folders yet."
+          fi

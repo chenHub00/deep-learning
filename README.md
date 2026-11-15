@@ -35,12 +35,19 @@ There are also notebooks used as projects for the Nanodegree program. In the pro
 
 ## Dependencies
 
-Each directory has a `requirements.txt` describing the minimal dependencies required to run the notebooks in that directory.
+The repository is being ported to **PyTorch** (Python 3.11/3.12) one folder at a time.
 
-### pip
+### Modern setup (ported notebooks)
 
-To install these dependencies with pip, you can issue `pip3 install -r requirements.txt`.
+```
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Conda Environments
+or with conda: `conda env create -f environment.yml`.
 
-You can find Conda environment files for the Deep Learning program in the `environments` folder. Note that environment files are platform dependent. Versions with `tensorflow-gpu` are labeled in the filename with "GPU".
+Folders listed in `ported_folders.txt` are executed by CI (`pytest --nbmake <folder>`).
+
+### Legacy setup (not yet ported)
+
+Notebooks that have not been ported still target TensorFlow 1.0 / Python 3.5 and use the `requirements.txt` in their own folder or the Conda files in `environments/`. These will be removed once the port is complete.

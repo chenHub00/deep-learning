@@ -1,0 +1,19 @@
+# Modern environment for the PyTorch port (Python 3.11 or 3.12).
+# Notebooks not yet ported still use the legacy per-folder requirements.txt files.
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+matplotlib>=3.8
+scikit-learn>=1.4
+scikit-image>=0.22
+tqdm>=4.66
+requests>=2.31
+bokeh>=3.3
+torch>=2.3
+torchvision>=0.18
+tensorboard>=2.16
+gymnasium>=0.29
+jupyterlab>=4.0
+ipywidgets>=8.1
+nbmake>=1.5
+pytest>=8.0
