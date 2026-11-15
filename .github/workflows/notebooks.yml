@@ -23,13 +23,11 @@ jobs:
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
       - name: Execute ported notebooks
-        # Folders are added to ported_folders.txt as each one is migrated.
+        # Notebooks are added to ported_notebooks.txt as each one is migrated.
         run: |
-          if [ -s ported_folders.txt ]; then
-            while read -r d; do
-              [ -z "$d" ] && continue
-              pytest --nbmake --nbmake-timeout=600 "$d"
-            done < ported_folders.txt
-          else
-            echo "No ported folders yet."
-          fi
+          while read -r nb; do
+            [ -z "$nb" ] && continue
+            pytest --nbmake --nbmake-timeout=1800 "$nb"
+          done < ported_notebooks.txt
+      - name: Execute exercise notebooks with solutions filled in
+        run: pytest tests

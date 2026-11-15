@@ -48,7 +48,7 @@ pip install -r requirements.txt
 
 or with conda: `conda env create -f environment.yml`.
 
-Folders listed in `ported_folders.txt` are executed by CI (`pytest --nbmake <folder>`).
+Notebooks listed in `ported_notebooks.txt` are executed by CI (`pytest --nbmake <notebook>`). Exercise notebooks have TODO blanks, so `tests/test_solved_notebooks.py` fills them in from the matching solutions notebook and runs the result (`pytest tests`).
 
 ### Legacy setup (not yet ported)
 
