@@ -6,6 +6,8 @@ There are also notebooks used as projects for the Nanodegree program. In the pro
 
 ## Table Of Contents
 
+New to the material? See the suggested order in [docs/curriculum.md](docs/curriculum.md).
+
 ### Tutorials
 
 * [Sentiment Analysis with Numpy](https://github.com/udacity/deep-learning/tree/master/sentiment-network): [Andrew Trask](http://iamtrask.github.io/) leads you through building a sentiment analysis model, predicting if some text is positive or negative.
