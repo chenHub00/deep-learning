@@ -1,2 +1,5 @@
 first-neural-network/Your_first_neural_network.ipynb
 sentiment-network/Sentiment_Classification_Solutions.ipynb
+intro-to-pytorch/Student_Admissions_PyTorch.ipynb
+intro-to-pytorch/Digit_Recognition_PyTorch_Solution.ipynb
+intro-to-pytorch/Sentiment_Analysis_PyTorch_Solution.ipynb

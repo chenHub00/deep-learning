@@ -35,6 +35,27 @@ def solved_notebook(folder, exercise, solution, indices, wrap):
     return ex
 
 
+# Exercise/solution pairs with identical cell layout: every exercise cell that
+# contains "TODO" is replaced by the solution cell at the same index.
+PAIRED = [
+    ("intro-to-pytorch", "Digit_Recognition_PyTorch", "Digit_Recognition_PyTorch_Solution"),
+    ("intro-to-pytorch", "Sentiment_Analysis_PyTorch", "Sentiment_Analysis_PyTorch_Solution"),
+]
+
+
+@pytest.mark.parametrize("folder,exercise,solution", PAIRED, ids=[p[1] for p in PAIRED])
+def test_paired_exercise_with_solutions(folder, exercise, solution):
+    ex = nbformat.read(ROOT / folder / f"{exercise}.ipynb", as_version=4)
+    sol = nbformat.read(ROOT / folder / f"{solution}.ipynb", as_version=4)
+    assert len(ex.cells) == len(sol.cells), "exercise and solution have different layouts"
+    todo = [i for i, c in enumerate(ex.cells) if c.cell_type == "code" and "TODO" in c.source]
+    assert todo, "no TODO cells found"
+    for i in todo:
+        ex.cells[i].source = sol.cells[i].source
+    NotebookClient(ex, timeout=600, kernel_name="python3",
+                   resources={"metadata": {"path": str(ROOT / folder)}}).execute()
+
+
 @pytest.mark.parametrize("folder,exercise,solution,indices,wrap", CASES,
                          ids=[c[0] for c in CASES])
 def test_exercise_with_solutions(folder, exercise, solution, indices, wrap):

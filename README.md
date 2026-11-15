@@ -24,7 +24,7 @@ New to the material? See the suggested order in [docs/curriculum.md](docs/curric
 * [Batch normalization](https://github.com/udacity/deep-learning/tree/master/batch-norm): Learn how to improve training rates and network stability with batch normalizations.
 * [Generative Adversatial Network on MNIST](https://github.com/udacity/deep-learning/tree/master/gan_mnist): Train a simple generative adversarial network on the MNIST dataset.
 * [Deep Convolutional GAN (DCGAN)](https://github.com/udacity/deep-learning/tree/master/dcgan-svhn): Implement a DCGAN to generate new images based on the Street View House Numbers (SVHN) dataset.
-* [Intro to TFLearn](https://github.com/udacity/deep-learning/tree/master/intro-to-tflearn): A couple introductions to a high-level library for building neural networks.
+* [Intro to PyTorch](intro-to-pytorch): Three short notebooks that build neural networks with PyTorch: student admissions, MNIST digit recognition and bag-of-words sentiment analysis. (The original TFLearn and Keras notebooks are kept in [`legacy/`](legacy).)
 
 ### Projects
 
