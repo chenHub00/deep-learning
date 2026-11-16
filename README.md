@@ -50,6 +50,21 @@ or with conda: `conda env create -f environment.yml`.
 
 Notebooks listed in `ported_notebooks.txt` are executed by CI (`pytest --nbmake <notebook>`). Exercise notebooks have TODO blanks, so `tests/test_solved_notebooks.py` fills them in from the matching solutions notebook and runs the result (`pytest tests`).
 
+### Using a GPU
+
+The ported notebooks pick a device automatically (`cuda`, then Apple `mps`, then `cpu`) and print it near the top. To use an NVIDIA GPU you only need a PyTorch build that matches your driver:
+
+1. Check the driver with `nvidia-smi` (the "CUDA Version" it shows is the highest your driver supports).
+2. Install the matching build from [pytorch.org](https://pytorch.org/get-started/locally/). On Linux the default `pip install -r requirements.txt` already installs a CUDA build. On Windows the default wheel is CPU-only, so use the index URL the selector gives you, for example:
+
+```
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+```
+
+3. Check it: `python -c "import torch; print(torch.cuda.is_available())"` should print `True`, and the notebooks should print `Using device: cuda`.
+
+The small models in `intro-to-pytorch/` run about as fast on a CPU; the GPU starts to matter for the convolutional, recurrent and GAN notebooks. CI always uses the CPU build.
+
 ### Legacy setup (not yet ported)
 
 Notebooks that have not been ported still target TensorFlow 1.0 / Python 3.5 and use the `requirements.txt` in their own folder or the Conda files in `environments/`. These will be removed once the port is complete.
