@@ -23,3 +23,6 @@ runs/
 *.pt
 *.pth
 intro-to-pytorch/data/
+intro-to-pytorch/*.zip
+batch-norm/data/
+weight-initialization/data/

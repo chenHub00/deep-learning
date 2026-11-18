@@ -11,7 +11,6 @@ New to the material? See the suggested order in [docs/curriculum.md](docs/curric
 ### Tutorials
 
 * [Sentiment Analysis with Numpy](https://github.com/udacity/deep-learning/tree/master/sentiment-network): [Andrew Trask](http://iamtrask.github.io/) leads you through building a sentiment analysis model, predicting if some text is positive or negative.
-* [Intro to TensorFlow](https://github.com/udacity/deep-learning/tree/master/intro-to-tensorflow): Starting building neural networks with Tensorflow.
 * [Weight Intialization](https://github.com/udacity/deep-learning/tree/master/weight-initialization): Explore how initializing network weights affects performance.
 * [Autoencoders](https://github.com/udacity/deep-learning/tree/master/autoencoder): Build models for image compression and denoising, using feed-forward and convolution networks in TensorFlow.
 * [Transfer Learning (ConvNet)](https://github.com/udacity/deep-learning/tree/master/transfer-learning). In practice, most people don't train their own large networkd on huge datasets, but use pretrained networks such as VGGnet. Here you'll use VGGnet to classify images of flowers without training a network on the images themselves.
@@ -24,7 +23,7 @@ New to the material? See the suggested order in [docs/curriculum.md](docs/curric
 * [Batch normalization](https://github.com/udacity/deep-learning/tree/master/batch-norm): Learn how to improve training rates and network stability with batch normalizations.
 * [Generative Adversatial Network on MNIST](https://github.com/udacity/deep-learning/tree/master/gan_mnist): Train a simple generative adversarial network on the MNIST dataset.
 * [Deep Convolutional GAN (DCGAN)](https://github.com/udacity/deep-learning/tree/master/dcgan-svhn): Implement a DCGAN to generate new images based on the Street View House Numbers (SVHN) dataset.
-* [Intro to PyTorch](intro-to-pytorch): Three short notebooks that build neural networks with PyTorch: student admissions, MNIST digit recognition and bag-of-words sentiment analysis. (The original TFLearn and Keras notebooks are kept in [`legacy/`](legacy).)
+* [Intro to PyTorch](intro-to-pytorch): Start building neural networks with PyTorch: a notMNIST letter-classification lab, student admissions, MNIST digit recognition and bag-of-words sentiment analysis. (The original TFLearn and Keras notebooks are kept in [`legacy/`](legacy).)
 
 ### Projects
 
@@ -47,6 +46,8 @@ pip install -r requirements.txt
 ```
 
 or with conda: `conda env create -f environment.yml`.
+
+The heavier notebooks read the environment variable `DL_SMOKE=1` to train for far fewer batches or on a smaller subset of the data; CI sets it, and you can too for a quick check that everything runs (leave it unset for the full lesson).
 
 Notebooks listed in `ported_notebooks.txt` are executed by CI (`pytest --nbmake <notebook>`). Exercise notebooks have TODO blanks, so `tests/test_solved_notebooks.py` fills them in from the matching solutions notebook and runs the result (`pytest tests`).
 

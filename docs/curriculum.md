@@ -16,7 +16,7 @@ How a network learns: loss, gradients and the update rule.
 
 ## Stage 2: The framework and making training work
 
-6. `intro-to-tensorflow`: first steps with a framework (tensors, layers, optimizers). Becomes the PyTorch intro in the port.
+6. `intro-to-pytorch/NotMNIST_Lab_PyTorch.ipynb`: first steps with a framework (tensors, gradients, optimizers): classify letters from the notMNIST dataset.
 7. `intro-to-pytorch/Student_Admissions_PyTorch.ipynb`: the admissions problem again, with a framework doing the gradients.
 8. `intro-to-pytorch/Sentiment_Analysis_PyTorch.ipynb`: the sentiment problem again, with a bag-of-words network.
 9. `intro-to-pytorch/Digit_Recognition_PyTorch.ipynb`: classifying MNIST digits. (The original TFLearn and Keras versions of steps 7 to 9 are kept in `legacy/`.)

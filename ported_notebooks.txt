@@ -3,3 +3,7 @@ sentiment-network/Sentiment_Classification_Solutions.ipynb
 intro-to-pytorch/Student_Admissions_PyTorch.ipynb
 intro-to-pytorch/Digit_Recognition_PyTorch_Solution.ipynb
 intro-to-pytorch/Sentiment_Analysis_PyTorch_Solution.ipynb
+intro-to-pytorch/NotMNIST_Lab_PyTorch_Solution.ipynb
+weight-initialization/weight_initialization.ipynb
+batch-norm/Batch_Normalization_Lesson.ipynb
+batch-norm/Batch_Normalization_Solutions.ipynb

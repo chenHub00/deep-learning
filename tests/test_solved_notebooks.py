@@ -5,6 +5,7 @@ exercise/solution pair below, the TODO cells (by index) are replaced with the
 solution's code cells, in order, and the result is executed top to bottom.
 """
 import json
+import os
 from pathlib import Path
 
 import nbformat
@@ -12,6 +13,9 @@ import pytest
 from nbclient import NotebookClient
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# Notebooks read DL_SMOKE=1 to shrink epochs/data so they finish quickly on a CPU.
+os.environ["DL_SMOKE"] = "1"
 
 # folder, exercise, solution, indices of exercise cells to replace,
 # {index: (prefix, suffix)} extra code needed because the solution is a fragment.
@@ -40,6 +44,8 @@ def solved_notebook(folder, exercise, solution, indices, wrap):
 PAIRED = [
     ("intro-to-pytorch", "Digit_Recognition_PyTorch", "Digit_Recognition_PyTorch_Solution"),
     ("intro-to-pytorch", "Sentiment_Analysis_PyTorch", "Sentiment_Analysis_PyTorch_Solution"),
+    ("intro-to-pytorch", "NotMNIST_Lab_PyTorch", "NotMNIST_Lab_PyTorch_Solution"),
+    ("batch-norm", "Batch_Normalization_Exercises", "Batch_Normalization_Solutions"),
 ]
 
 

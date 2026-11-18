@@ -23,6 +23,8 @@ jobs:
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
       - name: Execute ported notebooks
+        env:
+          DL_SMOKE: "1"
         # Notebooks are added to ported_notebooks.txt as each one is migrated.
         run: |
           while read -r nb; do

@@ -1,17 +1,66 @@
-import numpy as np
+import os
+
 import matplotlib.pyplot as plt
-import tensorflow as tf
+import numpy as np
+import torch
+import torch.nn.functional as F
+from torchvision import datasets
+
+# Set DL_SMOKE=1 to train for 1 epoch instead of 2 (used for quick automated checks).
+SMOKE = os.environ.get('DL_SMOKE') == '1'
+
+device = torch.device("cuda" if torch.cuda.is_available()
+                      else "mps" if torch.backends.mps.is_available()
+                      else "cpu")
+
+
+class Split:
+    """Images (flattened, 0-1) and one-hot labels for one part of MNIST."""
+
+    def __init__(self, images, labels):
+        self.images = images
+        self.labels = labels
+        self.num_examples = len(images)
+
+    def next_batch(self, batch_size):
+        """Return a random batch of `batch_size` examples."""
+        idx = torch.randint(0, self.num_examples, (batch_size,), device=self.images.device)
+        return self.images[idx], self.labels[idx]
+
+
+class MNIST:
+    """MNIST split into train (55,000), validation (5,000) and test (10,000)."""
+
+    def __init__(self, train, validation, test):
+        self.train, self.validation, self.test = train, validation, test
+
+
+def load_mnist(root='data', reshape=True):
+    """
+    Download (if needed) and load MNIST as tensors on the active device.
+
+    :param reshape: if True, images are flattened to 784 values; otherwise they have shape (1, 28, 28)
+    """
+    train = datasets.MNIST(root, train=True, download=True)
+    test = datasets.MNIST(root, train=False, download=True)
+
+    def prepare(ds, start=None, stop=None):
+        images = ds.data[start:stop].float().div(255)
+        images = images.reshape(len(images), -1) if reshape else images.unsqueeze(1)
+        labels = F.one_hot(ds.targets[start:stop], 10).float()
+        return Split(images.to(device), labels.to(device))
+
+    return MNIST(prepare(train, 0, 55000), prepare(train, 55000, None), prepare(test))
 
 
 def hist_dist(title, distribution_tensor, hist_range=(-4, 4)):
     """
-    Display histogram of a TF distribution
+    Display histogram of a tensor of values drawn from a distribution
     """
-    with tf.Session() as sess:
-        values = sess.run(distribution_tensor)
+    values = distribution_tensor.detach().cpu().numpy()
 
     plt.title(title)
-    plt.hist(values, np.linspace(*hist_range, num=len(values)/2))
+    plt.hist(values, np.linspace(*hist_range, num=len(values) // 2))
     plt.show()
 
 
@@ -20,62 +69,43 @@ def _get_loss_acc(dataset, weights):
     Get losses and validation accuracy of example neural network
     """
     batch_size = 128
-    epochs = 2
+    epochs = 1 if SMOKE else 2
     learning_rate = 0.001
 
-    features = tf.placeholder(tf.float32)
-    labels = tf.placeholder(tf.float32)
-    learn_rate = tf.placeholder(tf.float32)
-
+    # Copy the starting weights so every call starts from exactly the weights we were given
+    weights = [w.clone().to(device).requires_grad_() for w in weights]
     biases = [
-        tf.Variable(tf.zeros([256])),
-        tf.Variable(tf.zeros([128])),
-        tf.Variable(tf.zeros([dataset.train.labels.shape[1]]))
+        torch.zeros(256, device=device, requires_grad=True),
+        torch.zeros(128, device=device, requires_grad=True),
+        torch.zeros(dataset.train.labels.shape[1], device=device, requires_grad=True),
     ]
 
-    # Layers
-    layer_1 = tf.nn.relu(tf.matmul(features, weights[0]) + biases[0])
-    layer_2 = tf.nn.relu(tf.matmul(layer_1, weights[1]) + biases[1])
-    logits = tf.matmul(layer_2, weights[2]) + biases[2]
+    def network(features):
+        layer_1 = torch.relu(features @ weights[0] + biases[0])
+        layer_2 = torch.relu(layer_1 @ weights[1] + biases[1])
+        return layer_2 @ weights[2] + biases[2]
 
-    # Training loss
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
-
-    # Optimizer
-    optimizer = tf.train.AdamOptimizer(learn_rate).minimize(loss)
-
-    # Accuracy
-    correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    optimizer = torch.optim.Adam(weights + biases, lr=learning_rate)
 
     # Measurements use for graphing loss
     loss_batch = []
 
-    with tf.Session() as session:
-        session.run(tf.global_variables_initializer())
-        batch_count = int((dataset.train.num_examples / batch_size))
+    batch_count = int(dataset.train.num_examples / batch_size)
 
-        # The training cycle
-        for epoch_i in range(epochs):
-            for batch_i in range(batch_count):
-                batch_features, batch_labels = dataset.train.next_batch(batch_size)
+    # The training cycle
+    for epoch_i in range(epochs):
+        for batch_i in range(batch_count):
+            batch_features, batch_labels = dataset.train.next_batch(batch_size)
 
-                # Run optimizer and get loss
-                session.run(
-                    optimizer,
-                    feed_dict={features: batch_features, labels: batch_labels, learn_rate: learning_rate})
-                l = session.run(
-                    loss,
-                    feed_dict={features: batch_features, labels: batch_labels, learn_rate: learning_rate})
-                loss_batch.append(l)
+            optimizer.zero_grad()
+            loss = F.cross_entropy(network(batch_features), batch_labels)
+            loss.backward()
+            optimizer.step()
+            loss_batch.append(loss.item())
 
-        valid_acc = session.run(
-            accuracy,
-            feed_dict={features: dataset.validation.images, labels: dataset.validation.labels, learn_rate: 1.0})
-
-    # Hack to Reset batches
-    dataset.train._index_in_epoch = 0
-    dataset.train._epochs_completed = 0
+    with torch.no_grad():
+        predictions = network(dataset.validation.images).argmax(dim=1)
+        valid_acc = (predictions == dataset.validation.labels.argmax(dim=1)).float().mean().item()
 
     return loss_batch, valid_acc
 
@@ -107,7 +137,8 @@ def compare_init_weights(
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.show()
 
-    print('After 858 Batches (2 Epochs):')
+    epochs = 1 if SMOKE else 2
+    print('After {} Batches ({} Epochs):'.format(epochs * int(dataset.train.num_examples / 128), epochs))
     print('Validation Accuracy')
     for label, val_acc in label_accs:
         print('  {:7.3f}% -- {}'.format(val_acc*100, label))
